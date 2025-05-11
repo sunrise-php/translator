@@ -37,4 +37,13 @@ final class SymfonyTranslatorTest extends TestCase
         $translator = new SymfonyTranslator($this->translatorManager, 'app', 'sr');
         self::assertSame('sr', $translator->getLocale());
     }
+
+    public function testSetLocale(): void
+    {
+        $translator = new SymfonyTranslator($this->translatorManager, 'app', 'sr');
+        $translator->setLocale('ru');
+        self::assertSame('ru', $translator->getLocale());
+        $this->translatorManager->expects(self::once())->method('translate')->with('app', 'ru', 'Hello, {0}!', ['{0}' => 'Marko'])->willReturn('Здравствуй, Марко!');
+        self::assertSame('Здравствуй, Марко!', $translator->trans('Hello, {0}!', ['{0}' => 'Marko']));
+    }
 }
