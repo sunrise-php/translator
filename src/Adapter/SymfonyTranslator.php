@@ -21,6 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface as SymfonyTranslatorInterf
  */
 final class SymfonyTranslator implements SymfonyTranslatorInterface
 {
+    private ?string $locale = null;
+
     public function __construct(
         private readonly TranslatorManagerInterface $translatorManager,
         private readonly string $defaultDomain,
@@ -36,7 +38,7 @@ final class SymfonyTranslator implements SymfonyTranslatorInterface
     public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         $domain ??= $this->defaultDomain;
-        $locale ??= $this->defaultLocale;
+        $locale ??= $this->getLocale();
 
         return $this->translatorManager->translate($domain, $locale, $id, $parameters);
     }
@@ -46,6 +48,14 @@ final class SymfonyTranslator implements SymfonyTranslatorInterface
      */
     public function getLocale(): string
     {
-        return $this->defaultLocale;
+        return $this->locale ?? $this->defaultLocale;
+    }
+
+    /**
+     * @since 1.2.0
+     */
+    public function setLocale(?string $locale): void
+    {
+        $this->locale = $locale;
     }
 }
